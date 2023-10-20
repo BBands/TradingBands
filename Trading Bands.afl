@@ -1,0 +1,53 @@
+// Program to plot various types of trading bands in AmiBroker
+// Written for a presention before the Australian Techncial Analysis Society
+// Copyright John Bollinger 2023
+
+TradingBandType = ParamList( "Type of trading bands to plot", "Ledoux|Percent|Donchian|Keltner|Bollinger|Bollinger Envelopes", defaultval = 5 );
+Price = ParamField( "Price field", -1 );
+Periods = Param( "Periods", 20, 1, 100, 1 );
+Width = Param( "Width", 2, 0, 10, 0.05 );
+
+Switch(TradingBandType)
+{
+case "Ledoux":
+	upperBand  = High;
+	lowerBand = Low;
+	middleBand = 0;
+	break;
+
+case "Percent":
+	middleBand = MA( Price, Periods );
+	upperBand  = middleBand * (1 + Width/100);
+	lowerBand = middleBand / (1 + Width/100);
+	break;
+
+case "Donchian":
+	upperBand  = HHV(High, Periods);
+	lowerBand = LLV(Low, Periods);
+	middleBand = (upperBand + lowerBand) / 2;
+	break;
+
+case "Keltner":
+	middleBand = MA( Price, Periods );
+	upperBand  = middleBand + Width * ATR( Periods );
+	lowerBand = middleBand - Width * ATR( Periods );
+	break;
+	
+case "Bollinger":
+	middleBand = MA( Price, Periods );
+	upperBand  = middleBand + Width * StDev( Price, Periods, population = True );
+	lowerBand = middleBand - Width * Stdev( Price, Periods, population = True );
+	break;
+
+case "Bollinger Envelopes":
+	upperBand = MA( High, Periods) + 1.7 * StDev( High, Periods, population = True );
+	lowerBand = MA(Low, Periods) - 1.7 * Stdev( Low, Periods, population = True );
+	middleBand = ( upperBand + lowerBand ) / 2;
+	break;
+}
+
+Plot( upperBand, "Upper Band" + _PARAM_VALUES(), ColorRed, styleLine ); 
+If( middleBand[ BarCount - 1 ] != 0) Plot( middleBand, "MiddleBand" + _PARAM_VALUES(), colorBlue, styleLine );
+Plot( lowerBand, "Lower Band" + _PARAM_VALUES(), colorGreen, styleLine );
+
+// That's all folks!

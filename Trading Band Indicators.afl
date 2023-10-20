@@ -1,0 +1,46 @@
+// Program to plot Bollinger style trading bands indicators in AmiBroker
+// Written for a presention before the Australian Techncial Analysis Society
+// Copyright John Bollinger 2023
+
+Price = ParamField( "Price field", -1 );
+Periods = Param( "Periods", 20, 1, 100, 1 );
+LongPeriods = Param( "Long Periods", 50, 1, 100, 1 );
+Width = Param( "Width", 2, 0, 10, 0.05 );
+toPlot = ParamList("Indictor to Plot", "percent b|BandWidth|BBTrend");
+
+// Standard Bollinger Bands
+middleBand = MA( Price, Periods );
+upperBand  = middleBand + Width * StDev( Price, Periods, population = True );
+lowerBand = middleBand - Width * Stdev( Price, Periods, population = True );
+
+// Long Bollinger Bands
+middleBandLong = MA( Price, LongPeriods );
+upperBandLong  = middleBandLong + Width * StDev( Price, LongPeriods, population = True );
+lowerBandLong = middleBandLong - Width * Stdev( Price, LongPeriods, population = True );
+
+// Calc the indictors
+pctB = (Close - lowerBand) / (upperBand - lowerBand);
+BandWidth = (upperBand - lowerBand) / MiddleBand * 100;
+BBTrend = (abs(lowerBand - lowerBandLong) - abs(upperBand - upperBandLong)) / middleBand * 100;
+
+
+// Plot the chosen indicator
+switch(toPlot) {
+case "percent b":
+	Plot(pctB, "percent b", colorBlack, styleLine);
+	Plot(1, "1", colorRed, styleLine);
+	Plot(0.5, "0.5", colorBlue, styleLine);
+	Plot(0, "0", colorGreen, styleLine);
+	break;
+	
+case "BandWidth":
+	Plot(BandWidth, "BandWidth", colorBlack, styleLine);
+	break;
+
+case "BBTrend":
+	redGreen = IIf( BBTrend > 0, colorGreen, colorRed ); 
+	Plot(BBTrend, "BBTrend", redGreen, styleHistogram);
+	break;
+}
+ 
+// That's all folks!
