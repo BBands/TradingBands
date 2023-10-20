@@ -16,9 +16,10 @@ A short Python program to plot six types of trading bands.
 Created by John Bollinger for the 50th Anniversary Chartered Market Technician Association (CMTA) Symposium 2023 using Yahoo! or Norgate data.
 
 Added AmiBroker versions for the Australian Technical Analysis Association 2023 seminar.
+# Trading Bands.afl
+# Treadin Band Indicators.afl
 
-
-Requires: Python >=3.8, pandas, yfinance, and matplotlib.
+Python versions require: Python >=3.8, pandas, yfinance, and matplotlib.
 
 https://BollingerBands.com/
 
